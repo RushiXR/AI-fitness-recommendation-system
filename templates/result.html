@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>AI Fitness Results</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+
+            min-height: 100vh;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #eef2f3,
+                    #dfe9f3
+                );
+
+            color: #222;
+
+            padding: 35px 20px;
+        }
+
+
+        .container {
+
+            width: 100%;
+            max-width: 950px;
+
+            margin: 0 auto;
+
+            background: white;
+
+            border-radius: 18px;
+
+            padding: 40px;
+
+            box-shadow:
+                0 15px 45px
+                rgba(0, 0, 0, 0.10);
+        }
+
+
+        /* ====================================================
+           HEADER
+           ==================================================== */
+
+        .header {
+
+            text-align: center;
+
+            margin-bottom: 35px;
+        }
+
+
+        .header h1 {
+
+            font-size: 34px;
+
+            margin-bottom: 10px;
+        }
+
+
+        .header p {
+
+            color: #666;
+
+            font-size: 15px;
+
+            line-height: 1.5;
+        }
+
+
+        /* ====================================================
+           SECTION
+           ==================================================== */
+
+        .section {
+
+            margin-top: 32px;
+        }
+
+
+        .section-title {
+
+            font-size: 21px;
+
+            margin-bottom: 16px;
+
+            padding-bottom: 9px;
+
+            border-bottom:
+                1px solid #e3e3e3;
+        }
+
+
+        /* ====================================================
+           CARDS
+           ==================================================== */
+
+        .grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 16px;
+        }
+
+
+        .card {
+
+            background: #f7f8fa;
+
+            border:
+                1px solid #ececec;
+
+            border-radius: 12px;
+
+            padding: 20px;
+        }
+
+
+        .label {
+
+            color: #777;
+
+            font-size: 13px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .value {
+
+            font-size: 21px;
+
+            font-weight: 700;
+        }
+
+
+        /* ====================================================
+           HIGHLIGHT CARDS
+           ==================================================== */
+
+        .highlight-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 16px;
+        }
+
+
+        .highlight {
+
+            text-align: center;
+
+            background: #f7f8fa;
+
+            border:
+                1px solid #ececec;
+
+            border-radius: 12px;
+
+            padding: 23px 15px;
+        }
+
+
+        .highlight .label {
+
+            margin-bottom: 8px;
+        }
+
+
+        .highlight .value {
+
+            font-size: 23px;
+        }
+
+
+        /* ====================================================
+           RECOMMENDATION BOX
+           ==================================================== */
+
+        .recommendation {
+
+            background: #f7f8fa;
+
+            border:
+                1px solid #ececec;
+
+            border-radius: 12px;
+
+            padding: 22px;
+
+            margin-bottom: 16px;
+        }
+
+
+        .recommendation h3 {
+
+            font-size: 18px;
+
+            margin-bottom: 12px;
+        }
+
+
+        .recommendation p {
+
+            color: #444;
+
+            font-size: 15px;
+
+            line-height: 1.7;
+
+            white-space: pre-wrap;
+        }
+
+
+        /* ====================================================
+           WORKOUT BADGE
+           ==================================================== */
+
+        .workout-value {
+
+            display: inline-block;
+
+            padding: 10px 16px;
+
+            background: #e9eef3;
+
+            border-radius: 999px;
+
+            font-weight: 700;
+
+            font-size: 17px;
+        }
+
+
+        /* ====================================================
+           BUTTON
+           ==================================================== */
+
+        .back-button {
+
+            display: block;
+
+            width: 100%;
+
+            margin-top: 30px;
+
+            padding: 15px;
+
+            border-radius: 9px;
+
+            background: #222;
+
+            color: white;
+
+            text-decoration: none;
+
+            text-align: center;
+
+            font-size: 16px;
+
+            font-weight: 600;
+
+            transition:
+                background 0.2s ease;
+        }
+
+
+        .back-button:hover {
+
+            background: #444;
+        }
+
+
+        /* ====================================================
+           DISCLAIMER
+           ==================================================== */
+
+        .disclaimer {
+
+            margin-top: 22px;
+
+            padding: 15px;
+
+            border-radius: 9px;
+
+            background: #fafafa;
+
+            color: #777;
+
+            font-size: 12px;
+
+            line-height: 1.6;
+
+            text-align: center;
+        }
+
+
+        /* ====================================================
+           RESPONSIVE
+           ==================================================== */
+
+        @media (
+            max-width: 700px
+        ) {
+
+            .container {
+
+                padding: 25px;
+            }
+
+
+            .grid {
+
+                grid-template-columns: 1fr;
+            }
+
+
+            .highlight-grid {
+
+                grid-template-columns: 1fr;
+            }
+
+
+            .header h1 {
+
+                font-size: 28px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <div class="container">
+
+
+        <!-- ==================================================
+             HEADER
+             ================================================== -->
+
+        <div class="header">
+
+            <h1>
+                Your AI Fitness Results
+            </h1>
+
+            <p>
+                Results generated from your submitted
+                fitness profile.
+            </p>
+
+        </div>
+
+
+        <!-- ==================================================
+             USER INFORMATION
+             ================================================== -->
+
+        <div class="section">
+
+            <div class="section-title">
+                Your Profile
+            </div>
+
+
+            <div class="grid">
+
+
+                <div class="card">
+
+                    <div class="label">
+                        Age
+                    </div>
+
+                    <div class="value">
+                        {{ result.age }} years
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="label">
+                        Gender
+                    </div>
+
+                    <div class="value">
+                        {{ result.gender }}
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="label">
+                        Height
+                    </div>
+
+                    <div class="value">
+                        {{ result.height_cm }} cm
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="label">
+                        Weight
+                    </div>
+
+                    <div class="value">
+                        {{ result.weight_kg }} kg
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="label">
+                        Fitness Goal
+                    </div>
+
+                    <div class="value">
+                        {{ result.goal }}
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================================
+             BMI + BMR
+             ================================================== -->
+
+        <div class="section">
+
+            <div class="section-title">
+                Calculated Metrics
+            </div>
+
+
+            <div class="highlight-grid">
+
+
+                <div class="highlight">
+
+                    <div class="label">
+                        BMI
+                    </div>
+
+                    <div class="value">
+                        {{ result.bmi }}
+                    </div>
+
+                </div>
+
+
+                <div class="highlight">
+
+                    <div class="label">
+                        BMR
+                    </div>
+
+                    <div class="value">
+
+                        {{ result.bmr }}
+                        kcal/day
+
+                    </div>
+
+                </div>
+
+
+                <div class="highlight">
+
+                    <div class="label">
+                        Estimated Goal Time
+                    </div>
+
+                    <div class="value">
+
+                        {{ result.time_to_goal_days }}
+                        days
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================================
+             CALORIE RESULTS
+             ================================================== -->
+
+        <div class="section">
+
+            <div class="section-title">
+                Calorie Recommendations
+            </div>
+
+
+            <div class="highlight-grid">
+
+
+                <div class="highlight">
+
+                    <div class="label">
+                        Daily Caloric Intake
+                    </div>
+
+                    <div class="value">
+
+                        {{ result.daily_caloric_intake }}
+
+                        kcal
+
+                    </div>
+
+                </div>
+
+
+                <div class="highlight">
+
+                    <div class="label">
+                        Recommended Calories
+                    </div>
+
+                    <div class="value">
+
+                        {{ result.recommended_calories }}
+
+                        kcal
+
+                    </div>
+
+                </div>
+
+
+                <div class="highlight">
+
+                    <div class="label">
+                        Fitness Goal
+                    </div>
+
+                    <div class="value">
+
+                        {{ result.goal }}
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================================
+             DIET RECOMMENDATION
+             ================================================== -->
+
+        <div class="section">
+
+            <div class="section-title">
+                Diet Recommendation
+            </div>
+
+
+            <div class="recommendation">
+
+                <h3>
+                    Recommended Diet
+                </h3>
+
+                <p>
+                    {{ result.diet_plan }}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================================
+             WORKOUT RECOMMENDATION
+             ================================================== -->
+
+        <div class="section">
+
+            <div class="section-title">
+                Workout Recommendation
+            </div>
+
+
+            <div class="recommendation">
+
+                <h3>
+                    Workout Plan
+                </h3>
+
+                <div class="workout-value">
+
+                    {{ result.workout_plan }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================================
+             BACK BUTTON
+             ================================================== -->
+
+        <a
+            href="/"
+            class="back-button"
+        >
+
+            ← Try Another Profile
+
+        </a>
+
+
+        <!-- ==================================================
+             DISCLAIMER
+             ================================================== -->
+
+        <div class="disclaimer">
+
+            This application is an academic machine-learning
+            project. The generated results are estimates and
+            should not be treated as medical advice.
+
+        </div>
+
+
+    </div>
+
+
+</body>
+
+</html>

@@ -1,0 +1,9 @@
+Age
+Height
+Weight
+BMI
+BMR
+Sex_Female
+Sex_Male
+Fitness Goal_Weight Gain
+Fitness Goal_Weight Loss
