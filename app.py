@@ -158,6 +158,60 @@ def calculate_bmr(
 # MAKE PREDICTION
 # ============================================================
 
+def build_workout_details(workout_category, fitness_goal):
+    """Create a practical weekly workout outline from the ML-predicted category."""
+    category = str(workout_category).strip().title()
+    goal = str(fitness_goal).strip().title()
+
+    plans = {
+        "Cardio": [
+            ("Monday", "Brisk walking or cycling — 25–35 minutes; keep a pace where you can still talk."),
+            ("Tuesday", "Mobility and recovery — 10–15 minutes of gentle full-body stretching."),
+            ("Wednesday", "Cardio intervals — 5-minute warm-up, then 6 rounds of 1 minute faster + 2 minutes easy; finish with a 5-minute cool-down."),
+            ("Thursday", "Rest or an easy 15–20-minute walk."),
+            ("Friday", "Steady cardio — 25–40 minutes of walking, cycling, swimming, or another low-impact option."),
+            ("Saturday", "Optional enjoyable activity — dancing, hiking, or an easy bike ride for 20–30 minutes."),
+            ("Sunday", "Rest and recovery."),
+        ],
+        "Strength": [
+            ("Monday — Full body A", "Chair/bodyweight squats 2–3 × 8–12; wall or incline push-ups 2–3 × 8–12; glute bridges 2–3 × 10–15; backpack/band rows 2–3 × 8–12."),
+            ("Tuesday", "Recovery walk 15–25 minutes and gentle mobility."),
+            ("Wednesday — Full body B", "Hip hinges 2–3 × 8–12; supported split squats 2 × 6–10 each side; overhead press with light resistance 2 × 8–12; bird-dogs 2 × 8 each side."),
+            ("Thursday", "Rest or easy walking."),
+            ("Friday — Full body A", "Repeat Monday. If still sore, reduce the sets or take another recovery day."),
+            ("Saturday", "Optional easy cardio 15–20 minutes plus mobility."),
+            ("Sunday", "Rest and recovery."),
+        ],
+        "Mixed": [
+            ("Monday — Strength", "Chair/bodyweight squats 2–3 × 8–12; incline push-ups 2 × 8–12; glute bridges 2–3 × 10–15; rows with a band/backpack 2 × 8–12."),
+            ("Tuesday — Cardio", "Brisk walking, cycling, or swimming for 20–30 minutes at a moderate, conversational pace."),
+            ("Wednesday — Recovery", "Gentle mobility and stretching for 10–15 minutes, or rest."),
+            ("Thursday — Strength", "Hip hinges 2–3 × 8–12; supported lunges 2 × 6–10 each side; light shoulder press 2 × 8–12; bird-dogs 2 × 8 each side."),
+            ("Friday — Cardio", "20–30 minutes of steady, low-impact cardio."),
+            ("Saturday", "Optional easy walk and mobility; keep the effort light."),
+            ("Sunday", "Rest and recovery."),
+        ],
+    }
+    schedule = plans.get(category, plans["Mixed"])
+    goal_note = (
+        "Goal focus: support weight gain by pairing training with adequate food, protein, and recovery."
+        if goal == "Weight Gain" else
+        "Goal focus: support weight loss with consistent activity and sustainable nutrition; avoid trying to burn calories through exhausting sessions."
+    )
+    lines = [
+        f"Predicted workout type: {category}",
+        f"{goal_note}",
+        "Weekly schedule (beginner-friendly):",
+    ]
+    lines.extend(f"{day}: {activities}" for day, activities in schedule)
+    lines.extend([
+        "How to progress: start with 2 sets if new to exercise; when all reps feel controlled, add a few reps or a little resistance—not both at once.",
+        "Every session: warm up for 5 minutes and cool down for 3–5 minutes. Rest 60–120 seconds between strength sets.",
+        "Safety: use a comfortable range of motion, stop if you feel sharp pain, dizziness, or unusual breathlessness, and adapt exercises to your ability. This is general guidance, not a medical prescription.",
+    ])
+    return "\n\n".join(lines)
+
+
 def generate_prediction(
     age,
     gender,
@@ -290,9 +344,11 @@ def generate_prediction(
         .predict(model_input)[0]
     )
 
-    workout_plan = (
-        workout_model
-        .predict(model_input)[0]
+    workout_plan = str(
+        workout_model.predict(model_input)[0]
+    )
+    workout_plan_details = build_workout_details(
+        workout_plan, fitness_goal
     )
 
 
@@ -339,9 +395,8 @@ def generate_prediction(
             diet_plan
         ),
 
-        "workout_plan": str(
-            workout_plan
-        ),
+        "workout_plan": workout_plan,
+        "workout_plan_details": workout_plan_details,
     }
 
 
@@ -615,6 +670,9 @@ def predict():
                         ],
                         "workout_plan": result[
                             "workout_plan"
+                        ],
+                        "workout_plan_details": result[
+                            "workout_plan_details"
                         ],
                     },
                 }
